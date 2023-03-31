@@ -15,6 +15,8 @@ struct Node {
 
 class RedBlackTree {
 public:
+    int rTime = 0;
+public:
     RedBlackTree() : root(nullptr) {}
 
     /* 插入 key（注意这里没有额外判断 key 是否已经存在，默认不存在）*/
@@ -36,7 +38,9 @@ public:
     }
 
     int search(const int &key) {
-        return findNode(root, key)->key;
+        Node *res = findNode(root, key);
+        if(res) return res->key;
+        return -1;
     }
 
     /* 从节点 node 开始中遍历打印红黑树 */
@@ -98,8 +102,7 @@ private:
                         break;
                 } else {
                     if (node == node->parent->right) {
-                        rotateLeft(node->parent);
-                        node = node->parent->parent->left;
+                        node = rotateLeft(node->parent)->left;
                     }
                     node->parent->color = BLACK;
                     node->parent->parent->color = RED;
@@ -119,8 +122,7 @@ private:
                         break;
                 } else {
                     if (node == node->parent->left) {
-                        rotateRight(node->parent);
-                        node = node->parent->parent->right;
+                        node = rotateRight(node->parent)->right;
                     }
                     node->parent->color = BLACK;
                     node->parent->parent->color = RED;
@@ -136,7 +138,8 @@ private:
     }
 
     /* 左旋 */
-    void rotateLeft(Node *node) {
+    Node* rotateLeft(Node *node) {
+        rTime += 1;
         Node *rightChild = node->right;
         node->right = rightChild->left;
         if (rightChild->left) {
@@ -152,10 +155,12 @@ private:
         }
         rightChild->left = node;
         node->parent = rightChild;
+        return rightChild;
     }//如果返回，返回值是node的parent
 
     /* 右旋 */
-    void rotateRight(Node *node) {
+    Node* rotateRight(Node *node) {
+        rTime += 1;
         Node *leftChild = node->left;
         node->left = leftChild->right;
         if (leftChild->right) {
@@ -171,5 +176,6 @@ private:
         }
         leftChild->right = node;
         node->parent = leftChild;
+        return leftChild;
     }//如果返回，返回值是node的parent
 };
